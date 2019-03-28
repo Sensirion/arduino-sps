@@ -51,28 +51,17 @@ void sensirion_i2c_init()
 
 s8 sensirion_i2c_read(u8 address, u8* data, u16 count)
 {
-    u8 readData[count];
-    u8 rxByteCount = 0;
-
-    uint8_t ret = I2c.read(address, count, readData);
-    if (ret != 0) {
-      return ret;
-    }
-
-    memcpy(data, readData, count);
-    return 0;
+    return I2c.read(address, count, data);
 }
 
 s8 sensirion_i2c_write(u8 address, const u8* data, u16 count)
 {
-    uint8_t ret = 0;
-
     // the API doesn't forsee calls without register, so we'll use the first
     // byte as "register", and pass the rest as data argument
     if (count == 0) {
-      return ret;
+      return 0;
     }
-    return I2c.write(address, data[0], data+1, count-1);
+    return I2c.write(address, data[0], data + 1, count - 1);
 }
 
 /**
