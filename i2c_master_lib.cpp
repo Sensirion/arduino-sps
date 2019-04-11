@@ -69,7 +69,7 @@
 #include <inttypes.h>
 #include "i2c_master_lib.h"
 
-
+#ifdef SPS30_USE_ALT_I2C
 
 uint8_t I2C::bytesAvailable = 0;
 uint8_t I2C::bufferIndex = 0;
@@ -713,3 +713,4 @@ void I2C::lockUp()
 }
 
 I2C I2c = I2C();
+#endif /* SPS30_USE_ALT_I2C */

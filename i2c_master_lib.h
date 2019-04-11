@@ -52,12 +52,16 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+#include "sensirion_arch_config.h"
+
+#ifdef SPS30_USE_ALT_I2C
 
 #if(ARDUINO >= 100)
 #include <Arduino.h>
 #else
 #include <WProgram.h>
 #endif
+
 
 #include <inttypes.h>
 
@@ -133,3 +137,5 @@ class I2C
 extern I2C I2c;
 
 #endif
+
+#endif /* SPS30_USE_ALT_I2C */

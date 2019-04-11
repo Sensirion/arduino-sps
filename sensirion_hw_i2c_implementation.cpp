@@ -33,11 +33,15 @@
 
 // needed for delay() routine
 #include <Arduino.h>
-#include "i2c_master_lib.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+
+#ifdef SPS30_USE_ALT_I2C
+#include "i2c_master_lib.h"
 
 /**
  * Initialize all hard- and software components that are needed for the I2C
@@ -63,6 +67,49 @@ s8 sensirion_i2c_write(u8 address, const u8* data, u16 count)
     }
     return I2c.write(address, data[0], data + 1, count - 1);
 }
+
+#else /* SPS30_USE_ALT_I2C */
+
+#include <Wire.h>
+/**
+ * Initialize all hard- and software components that are needed for the I2C
+ * communication. After this function has been called, the functions
+ * i2c_read() and i2c_write() must succeed.
+ */
+void sensirion_i2c_init()
+{
+   Wire.begin();
+}
+
+s8 sensirion_i2c_read(u8 address, u8* data, u16 count)
+{
+    u8 readData[count];
+    u8 rxByteCount=0;
+
+    // 2 bytes RH, 1 CRC, 2 bytes T, 1 CRC
+    Wire.requestFrom((uint8_t)address, (uint8_t)count);
+
+    while (Wire.available()) { // wait till all arrive
+      readData[rxByteCount++] = Wire.read();
+      if(rxByteCount >= count)
+        break;
+    }
+
+    memcpy(data, readData, count);
+
+    return 0;
+}
+
+s8 sensirion_i2c_write(u8 address, const u8* data, u16 count)
+{
+    Wire.beginTransmission(address);
+    Wire.write(data, count);
+    Wire.endTransmission();
+
+    return 0;
+}
+#endif /* SPS30_USE_ALT_I2C */
+
 
 /**
  * Sleep for a given number of microseconds. The function should delay the

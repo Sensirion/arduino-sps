@@ -31,6 +31,10 @@
 #ifndef SENSIRION_ARCH_CONFIG_H
 #define SENSIRION_ARCH_CONFIG_H
 
+#ifdef __AVR__
+#define SPS30_USE_ALT_I2C
+#endif /* __AVR__ */
+
 /**
  * If your platform does not provide the library stdint.h you have to
  * define the integral types yourself (see below).
