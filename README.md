@@ -4,7 +4,18 @@ To learn more about the SPS30, please visit https://www.sensirion.com/sps30/. Fo
 
 This library is using the code from Sensirion's [embedded-sps](https://github.com/Sensirion/embedded-sps) library, and adding a handful of changes to adapt to Arduino.
 
-Most notably, this is using an alternative [I2C Master Library](https://github.com/DSSCircuits/I2C-Master-Library) to work around the I2C buffer size limit that exists on certain Arduino platform, including the Arduino Uno series.
+Most notably, for AVR based platforms (like Arduino Uno and friends), this is using an alternative [I2C Master Library](https://github.com/DSSCircuits/I2C-Master-Library) to work around the I2C buffer size limit that exists on those boards.
+
+## Compatibility
+
+This library has been tested on the following platforms:
+- AVR based Arduino, like Arduino Uno
+- ESP8266, using v2.5.0 or newer (Tested on Adafruit Feather Huzzah ESP8266)
+- ESP32, using v1.0.1 or newer (Tested on Adafruit Feather Huzzah ESP32)
+- SAMD (tested on Arduino MKR 1010)
+
+**Important Note:** The SPS30 requires 5V input voltage +/-0.5V in order to provide correct output values. When using a 3.3V based Arduino,
+make sure to use the appropriate voltage regulators and level shifters for I2C!
 
 ## Installation
 
