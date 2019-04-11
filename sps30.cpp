@@ -108,17 +108,17 @@ s16 sps30_read_measurement(struct sps30_measurement *measurement) {
     s16 ret;
     u16 idx;
     union {
-        u16 u16[2];
+        u16 value_u16[2];
         u32 u;
         f32 f;
     } val, data[10];
 
     ret = sensirion_i2c_read_cmd(SPS_I2C_ADDRESS, SPS_CMD_READ_MEASUREMENT,
-                                 data->u16, SENSIRION_NUM_WORDS(data));
+                                 data->value_u16, SENSIRION_NUM_WORDS(data));
     if (ret != STATUS_OK)
         return ret;
 
-    SENSIRION_WORDS_TO_BYTES(data->u16, SENSIRION_NUM_WORDS(data));
+    SENSIRION_WORDS_TO_BYTES(data->value_u16, SENSIRION_NUM_WORDS(data));
 
     idx = 0;
     val.u = be32_to_cpu(data[idx].u);
@@ -157,17 +157,17 @@ s16 sps30_read_measurement(struct sps30_measurement *measurement) {
 
 s16 sps30_get_fan_auto_cleaning_interval(u32 *interval_seconds) {
     union {
-        u16 u16[2];
-        u32 u32;
+        u16 value_u16[2];
+        u32 value_u32;
     } data;
     s16 ret = sensirion_i2c_read_cmd(SPS_I2C_ADDRESS,
                                      SPS_CMD_AUTOCLEAN_INTERVAL,
-                                     data.u16, SENSIRION_NUM_WORDS(data.u16));
+                                     data.value_u16, SENSIRION_NUM_WORDS(data.value_u16));
     if (ret != STATUS_OK)
         return ret;
 
-    SENSIRION_WORDS_TO_BYTES(data.u16, SENSIRION_NUM_WORDS(data.u16));
-    *interval_seconds = be32_to_cpu(data.u32);
+    SENSIRION_WORDS_TO_BYTES(data.value_u16, SENSIRION_NUM_WORDS(data.value_u16));
+    *interval_seconds = be32_to_cpu(data.value_u32);
 
     return 0;
 }
