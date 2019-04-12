@@ -31,6 +31,10 @@
 #ifndef SENSIRION_ARCH_CONFIG_H
 #define SENSIRION_ARCH_CONFIG_H
 
+/*
+ * AVR Arduinos have a 32 byte I2C receive buffer in the Wire library
+ * Use alternative I2C implementation to work around that
+ */
 #ifdef __AVR__
 #define SPS30_USE_ALT_I2C
 #endif /* __AVR__ */
