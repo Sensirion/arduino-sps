@@ -107,11 +107,18 @@ s16 sps30_read_data_ready(u16 *data_ready) {
 s16 sps30_read_measurement(struct sps30_measurement *measurement) {
     s16 ret;
     u16 idx;
+
+#ifdef SPS30_LIMITED_I2C_BUFFER_SIZE
+    #define SPS30_MEASUREMENT_DATA_LENGTH 4
+#else
+    #define SPS30_MEASUREMENT_DATA_LENGTH 10
+#endif
+
     union {
         u16 value_u16[2];
         u32 u;
         f32 f;
-    } val, data[10];
+    } val, data[SPS30_MEASUREMENT_DATA_LENGTH];
 
     ret = sensirion_i2c_read_cmd(SPS_I2C_ADDRESS, SPS_CMD_READ_MEASUREMENT,
                                  data->value_u16, SENSIRION_NUM_WORDS(data));
@@ -132,6 +139,15 @@ s16 sps30_read_measurement(struct sps30_measurement *measurement) {
     ++idx;
     val.u = be32_to_cpu(data[idx].u);
     measurement->mc_10p0 = val.f;
+
+#ifdef SPS30_LIMITED_I2C_BUFFER_SIZE
+    measurement->nc_0p5  = -1.0f;
+    measurement->nc_1p0  = -1.0f;
+    measurement->nc_2p5  = -1.0f;
+    measurement->nc_4p0  = -1.0f;
+    measurement->nc_10p0 = -1.0f;
+    measurement->typical_particle_size = -1.0f;
+#else
     ++idx;
     val.u = be32_to_cpu(data[idx].u);
     measurement->nc_0p5 = val.f;
@@ -151,6 +167,7 @@ s16 sps30_read_measurement(struct sps30_measurement *measurement) {
     val.u = be32_to_cpu(data[idx].u);
     measurement->typical_particle_size = val.f;
     ++idx;
+#endif
 
     return 0;
 }

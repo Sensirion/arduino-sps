@@ -38,6 +38,16 @@ void setup() {
 #ifndef PLOTTER_FORMAT
   Serial.print("measurements started\n");
 #endif /* PLOTTER_FORMAT */
+
+#ifdef SPS30_LIMITED_I2C_BUFFER_SIZE
+  Serial.print("Your Arduino hardware has a limitation that only\n");
+  Serial.print("  allows reading the mass concentrations. For more\n");
+  Serial.print("  information, please check\n");
+  Serial.print("  https://github.com/Sensirion/arduino-sps#esp8266-partial-legacy-support\n");
+  Serial.print("\n");
+  delay(2000);
+#endif
+
   delay(1000);
 }
 
@@ -74,6 +84,7 @@ void loop() {
     Serial.print("PM 10.0: ");
     Serial.println(m.mc_10p0);
 
+#ifndef SPS30_LIMITED_I2C_BUFFER_SIZE
     Serial.print("NC  0.5: ");
     Serial.println(m.nc_0p5);
     Serial.print("NC  1.0: ");
@@ -87,6 +98,8 @@ void loop() {
 
     Serial.print("Typical partical size: ");
     Serial.println(m.typical_particle_size);
+#endif
+
     Serial.println();
     
 #else
