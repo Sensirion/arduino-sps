@@ -17,6 +17,14 @@ This library has been tested on the following platforms:
 **Important Note:** The SPS30 requires 5V input voltage +/-0.5V in order to provide correct output values. When using a 3.3V based Arduino,
 make sure to use the appropriate voltage regulators and level shifters for I2C!
 
+### ESP8266 partial legacy support
+
+This library automatically detects ESP8266 core versions 2.3.0, 2.4.0, 2.4.1 and 2.4.2 and supports a limited
+subset of functionality on there. The following features are not available:
+- Reading out number concentrations,
+- Reading out the average particle size
+- Reading out the serial number
+
 ## Installation
 
 At this point, this library is not yet available through the Arduino Library manager. To install, following the following steps:
