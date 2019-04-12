@@ -35,6 +35,20 @@
 #define SPS30_USE_ALT_I2C
 #endif /* __AVR__ */
 
+/*
+ * ESP8266 core < 2.5.0 has a 32 byte I2C receive buffer in the Wire library
+ * Limit readout to PM mass concentrations
+ */
+#ifdef ESP8266
+#include <core_version.h>
+#if defined(ARDUINO_ESP8266_RELEASE_2_3_0) || \
+    defined(ARDUINO_ESP8266_RELEASE_2_4_0) || \
+    defined(ARDUINO_ESP8266_RELEASE_2_4_1) || \
+    defined(ARDUINO_ESP8266_RELEASE_2_4_2)
+#define SPS30_LIMITED_I2C_BUFFER_SIZE
+#endif
+#endif /* ESP8266 */
+
 /**
  * If your platform does not provide the library stdint.h you have to
  * define the integral types yourself (see below).
