@@ -59,7 +59,8 @@ s16 sps30_probe() {
 
     sensirion_i2c_init();
 
-    return sps30_get_serial(serial);
+    u32 val;
+    return sps30_get_fan_auto_cleaning_interval(&val);
 }
 
 s16 sps30_get_serial(char *serial) {
