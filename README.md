@@ -27,7 +27,13 @@ subset of functionality on there. The following features are not available:
 
 ## Installation
 
-At this point, this library is not yet available through the Arduino Library manager. To install, following the following steps:
+### Through the Arduino IDE
+
+This library is available through Arduino IDE's Library Manager. To install, select ```Tools```> ```Manage Libraries...```, then search for ```sensirion-sps```. Select the matching library and press ```Install```.
+
+### Manual installation
+
+For manual installation, follow these steps:
 
 1. Download the latest ZIP file from the [Github release page](https://github.com/winkj/arduino-sps/releases/latest)
 1. Start the Arduino IDE
