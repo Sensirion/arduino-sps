@@ -18,14 +18,15 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef SENSIRION_COMMON_H
@@ -40,10 +41,6 @@ extern "C" {
 #define STATUS_OK 0
 #define STATUS_FAIL (-1)
 
-#ifndef NULL
-#define NULL ((void *)0)
-#endif
-
 #if SENSIRION_BIG_ENDIAN
 #define be16_to_cpu(s) (s)
 #define be32_to_cpu(s) (s)
@@ -52,20 +49,22 @@ extern "C" {
 
 #else /* SENSIRION_BIG_ENDIAN */
 
-#define be16_to_cpu(s) (((u16)(s) << 8) | (0xff & ((u16)(s)) >> 8))
-#define be32_to_cpu(s) (((u32)be16_to_cpu(s) << 16) | \
-                        (0xffff & (be16_to_cpu((s) >> 16))))
-#define be64_to_cpu(s) (((u64)be32_to_cpu(s) << 32) | \
-                        (0xffffffff & ((u64)be32_to_cpu((s) >> 32))))
+#define be16_to_cpu(s) (((uint16_t)(s) << 8) | (0xff & ((uint16_t)(s)) >> 8))
+#define be32_to_cpu(s)                                                         \
+    (((uint32_t)be16_to_cpu(s) << 16) | (0xffff & (be16_to_cpu((s) >> 16))))
+#define be64_to_cpu(s)                                                         \
+    (((uint64_t)be32_to_cpu(s) << 32) |                                        \
+     (0xffffffff & ((uint64_t)be32_to_cpu((s) >> 32))))
 /**
  * Convert a word-array to a bytes-array, effectively reverting the
  * host-endianness to big-endian
- * @a:  word array to change (must be (u16 *) castable)
+ * @a:  word array to change (must be (uint16_t *) castable)
  * @w:  number of word-sized elements in the array (SENSIRION_NUM_WORDS(a)).
  */
-#define SENSIRION_WORDS_TO_BYTES(a, w) \
-    for (u16 *__a = (u16 *)(a), __e = (w), __w = 0; __w < __e; ++__w) { \
-        __a[__w] = be16_to_cpu(__a[__w]); \
+#define SENSIRION_WORDS_TO_BYTES(a, w)                                         \
+    for (uint16_t *__a = (uint16_t *)(a), __e = (w), __w = 0; __w < __e;       \
+         ++__w) {                                                              \
+        __a[__w] = be16_to_cpu(__a[__w]);                                      \
     }
 #endif /* SENSIRION_BIG_ENDIAN */
 
@@ -73,18 +72,19 @@ extern "C" {
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
 #endif
 
-#define CRC8_POLYNOMIAL             0x31
-#define CRC8_INIT                   0xFF
-#define CRC8_LEN                    1
+#define CRC8_POLYNOMIAL 0x31
+#define CRC8_INIT 0xFF
+#define CRC8_LEN 1
 
-#define SENSIRION_COMMAND_SIZE      2
-#define SENSIRION_WORD_SIZE         2
+#define SENSIRION_COMMAND_SIZE 2
+#define SENSIRION_WORD_SIZE 2
 #define SENSIRION_NUM_WORDS(x) (sizeof(x) / SENSIRION_WORD_SIZE)
-#define SENSIRION_MAX_BUFFER_WORDS  32
+#define SENSIRION_MAX_BUFFER_WORDS 32
 
-u8 sensirion_common_generate_crc(u8 *data, u16 count);
+uint8_t sensirion_common_generate_crc(uint8_t *data, uint16_t count);
 
-s8 sensirion_common_check_crc(u8 *data, u16 count, u8 checksum);
+int8_t sensirion_common_check_crc(uint8_t *data, uint16_t count,
+                                  uint8_t checksum);
 
 /**
  * sensirion_fill_cmd_send_buf() - create the i2c send buffer for a command and
@@ -100,7 +100,8 @@ s8 sensirion_common_check_crc(u8 *data, u16 count, u8 checksum);
  *
  * @return      The number of bytes written to buf
  */
-u16 sensirion_fill_cmd_send_buf(u8 *buf, u16 cmd, const u16 *args, u8 num_args);
+uint16_t sensirion_fill_cmd_send_buf(uint8_t *buf, uint16_t cmd,
+                                     const uint16_t *args, uint8_t num_args);
 
 /**
  * sensirion_i2c_read_words() - read data words from sensor
@@ -112,10 +113,12 @@ u16 sensirion_fill_cmd_send_buf(u8 *buf, u16 cmd, const u16 *args, u8 num_args);
  *
  * @return      STATUS_OK on success, an error code otherwise
  */
-s16 sensirion_i2c_read_words(u8 address, u16 *data_words, u16 num_words);
+int16_t sensirion_i2c_read_words(uint8_t address, uint16_t *data_words,
+                                 uint16_t num_words);
 
 /**
- * sensirion_i2c_read_bytes() - read data words as byte-stream from sensor
+ * sensirion_i2c_read_words_as_bytes() - read data words as byte-stream from
+ *                                       sensor
  *
  * Read bytes without adjusting values to the uP's word-order.
  *
@@ -129,7 +132,8 @@ s16 sensirion_i2c_read_words(u8 address, u16 *data_words, u16 num_words);
  *
  * @return      STATUS_OK on success, an error code otherwise
  */
-s16 sensirion_i2c_read_bytes(u8 address, u8 *data, u16 num_words);
+int16_t sensirion_i2c_read_words_as_bytes(uint8_t address, uint8_t *data,
+                                          uint16_t num_words);
 
 /**
  * sensirion_i2c_write_cmd() - writes a command to the sensor
@@ -138,7 +142,7 @@ s16 sensirion_i2c_read_bytes(u8 address, u8 *data, u16 num_words);
  *
  * @return      STATUS_OK on success, an error code otherwise
  */
-s16 sensirion_i2c_write_cmd(u8 address, u16 command);
+int16_t sensirion_i2c_write_cmd(uint8_t address, uint16_t command);
 
 /**
  * sensirion_i2c_write_cmd_with_args() - writes a command with arguments to the
@@ -150,8 +154,9 @@ s16 sensirion_i2c_write_cmd(u8 address, u16 command);
  *
  * @return      STATUS_OK on success, an error code otherwise
  */
-s16 sensirion_i2c_write_cmd_with_args(u8 address, u16 command,
-                                      const u16 *data_words, u16 num_words);
+int16_t sensirion_i2c_write_cmd_with_args(uint8_t address, uint16_t command,
+                                          const uint16_t *data_words,
+                                          uint16_t num_words);
 
 /**
  * sensirion_i2c_delayed_read_cmd() - send a command, wait for the sensor to
@@ -164,8 +169,9 @@ s16 sensirion_i2c_write_cmd_with_args(u8 address, u16 command,
  *
  * @return      STATUS_OK on success, an error code otherwise
  */
-s16 sensirion_i2c_delayed_read_cmd(u8 address, u16 cmd, u32 delay_us,
-                                   u16 *data_words, u16 num_words);
+int16_t sensirion_i2c_delayed_read_cmd(uint8_t address, uint16_t cmd,
+                                       uint32_t delay_us, uint16_t *data_words,
+                                       uint16_t num_words);
 /**
  * sensirion_i2c_read_cmd() - reads data words from the sensor after a command
  *                            is issued
@@ -176,7 +182,8 @@ s16 sensirion_i2c_delayed_read_cmd(u8 address, u16 cmd, u32 delay_us,
  *
  * @return      STATUS_OK on success, an error code otherwise
  */
-s16 sensirion_i2c_read_cmd(u8 address, u16 cmd, u16 *data_words, u16 num_words);
+int16_t sensirion_i2c_read_cmd(uint8_t address, uint16_t cmd,
+                               uint16_t *data_words, uint16_t num_words);
 
 #ifdef __cplusplus
 }

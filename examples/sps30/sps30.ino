@@ -8,13 +8,15 @@
 // #define PLOTTER_FORMAT
 
 void setup() {
-  s16 ret;
-  u8 auto_clean_days = 4;
-  u32 auto_clean;
+  int16_t ret;
+  uint8_t auto_clean_days = 4;
+  uint32_t auto_clean;
 
   Serial.begin(9600);
   delay(2000);
-  
+
+  sensirion_i2c_init();
+
   while (sps30_probe() != 0) {
     Serial.print("SPS sensor probing failed\n");
     delay(500);
@@ -29,7 +31,7 @@ void setup() {
     Serial.print("error setting the auto-clean interval: ");
     Serial.println(ret);
   }
-    
+
   ret = sps30_start_measurement();
   if (ret < 0) {
     Serial.print("error starting measurement\n");
@@ -53,9 +55,9 @@ void setup() {
 
 void loop() {
   struct sps30_measurement m;
-  char serial[SPS_MAX_SERIAL_LEN];
-  u16 data_ready;
-  s16 ret;
+  char serial[SPS30_MAX_SERIAL_LEN];
+  uint16_t data_ready;
+  int16_t ret;
 
   do {
     ret = sps30_read_data_ready(&data_ready);
@@ -101,7 +103,7 @@ void loop() {
 #endif
 
     Serial.println();
-    
+
 #else
     // since all values include particles smaller than X, if we want to create buckets we 
     // need to subtract the smaller particle count. 
@@ -111,7 +113,7 @@ void loop() {
     // - particles > 1,   <= 2.5
     // - particles > 2.5, <= 4
     // - particles > 4,   <= 10
-    
+
     Serial.print(m.nc_0p5);
     Serial.print(" ");
     Serial.print(m.nc_1p0  - m.nc_0p5);
@@ -125,7 +127,7 @@ void loop() {
 
 
 #endif /* PLOTTER_FORMAT */
-    
+
   }
 
   delay(1000);

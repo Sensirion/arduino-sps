@@ -37,20 +37,26 @@ extern "C" {
 #endif
 
 #include "sensirion_arch_config.h"
+#include "sensirion_common.h"
+#include "sensirion_i2c.h"
 
-#define SPS_MAX_SERIAL_LEN 32
+#define SPS30_I2C_ADDRESS 0x69
+#define SPS30_MAX_SERIAL_LEN 32
+#define SPS30_MEASUREMENT_DURATION_USEC 1000000 /* 1s measurement intervals */
+#define SPS30_RESET_DELAY_USEC 50000 /* 50ms delay after resetting the sensor  \
+                                      */
 
 struct sps30_measurement {
-    f32 mc_1p0;
-    f32 mc_2p5;
-    f32 mc_4p0;
-    f32 mc_10p0;
-    f32 nc_0p5;
-    f32 nc_1p0;
-    f32 nc_2p5;
-    f32 nc_4p0;
-    f32 nc_10p0;
-    f32 typical_particle_size;
+    float32_t mc_1p0;
+    float32_t mc_2p5;
+    float32_t mc_4p0;
+    float32_t mc_10p0;
+    float32_t nc_0p5;
+    float32_t nc_1p0;
+    float32_t nc_2p5;
+    float32_t nc_4p0;
+    float32_t nc_10p0;
+    float32_t typical_particle_size;
 };
 
 /**
@@ -68,7 +74,16 @@ const char *sps_get_driver_version(void);
  *
  * Return:  0 on success, an error code otherwise
  */
-s16 sps30_probe();
+int16_t sps30_probe();
+
+/**
+ * sps30_read_firmware_version - read the firmware version
+ * @major:  Memory where the firmware major version is written into
+ * @minor:  Memory where the firmware minor version is written into
+ *
+ * Return:  0 on success, an error code otherwise
+ */
+int16_t sps30_read_firmware_version(uint8_t *major, uint8_t *minor);
 
 /**
  * sps30_get_serial() - retrieve the serial number
@@ -76,10 +91,10 @@ s16 sps30_probe();
  * Note that serial must be discarded when the return code is non-zero.
  *
  * @serial: Memory where the serial number is written into as hex string (zero
- *          terminated). Must be at least SPS_MAX_SERIAL_LEN long.
+ *          terminated). Must be at least SPS30_MAX_SERIAL_LEN long.
  * Return:  0 on success, an error code otherwise
  */
-s16 sps30_get_serial(char *serial);
+int16_t sps30_get_serial(char *serial);
 
 /**
  * sps30_start_measurement() - start measuring
@@ -89,14 +104,14 @@ s16 sps30_get_serial(char *serial);
  *
  * Return:  0 on success, an error code otherwise
  */
-s16 sps30_start_measurement();
+int16_t sps30_start_measurement();
 
 /**
  * sps30_stop_measurement() - stop measuring
  *
  * Return:  0 on success, an error code otherwise
  */
-s16 sps30_stop_measurement();
+int16_t sps30_stop_measurement();
 
 /**
  * sps30_read_datda_ready() - reads the current data-ready flag
@@ -107,7 +122,7 @@ s16 sps30_stop_measurement();
  * @data_ready: Memory where the data-ready flag (0|1) is stored.
  * Return:      0 on success, an error code otherwise
  */
-s16 sps30_read_data_ready(u16 *data_ready);
+int16_t sps30_read_data_ready(uint16_t *data_ready);
 
 /**
  * sps30_read_measurement() - read a measurement
@@ -116,7 +131,7 @@ s16 sps30_read_data_ready(u16 *data_ready);
  *
  * Return:  0 on success, an error code otherwise
  */
-s16 sps30_read_measurement(struct sps30_measurement *measurement);
+int16_t sps30_read_measurement(struct sps30_measurement *measurement);
 
 /**
  * sps30_get_fan_auto_cleaning_interval() - read the current(*) auto-cleaning
@@ -133,7 +148,7 @@ s16 sps30_read_measurement(struct sps30_measurement *measurement);
  * @interval_seconds:   Memory where the interval in seconds is stored
  * Return:              0 on success, an error code otherwise
  */
-s16 sps30_get_fan_auto_cleaning_interval(u32 *interval_seconds);
+int16_t sps30_get_fan_auto_cleaning_interval(uint32_t *interval_seconds);
 
 /**
  * sps30_set_fan_auto_cleaning_interval() - set the current auto-cleaning
@@ -143,7 +158,7 @@ s16 sps30_get_fan_auto_cleaning_interval(u32 *interval_seconds);
  *                      interval, 0 to disable auto cleaning
  * Return:              0 on success, an error code otherwise
  */
-s16 sps30_set_fan_auto_cleaning_interval(u32 interval_seconds);
+int16_t sps30_set_fan_auto_cleaning_interval(uint32_t interval_seconds);
 
 /**
  * sps30_get_fan_auto_cleaning_interval_days() - convenience function to read
@@ -164,7 +179,7 @@ s16 sps30_set_fan_auto_cleaning_interval(u32 interval_seconds);
  * @interval_days:  Memory where the interval in days is stored
  * Return:          0 on success, an error code otherwise
  */
-s16 sps30_get_fan_auto_cleaning_interval_days(u8 *interval_days);
+int16_t sps30_get_fan_auto_cleaning_interval_days(uint8_t *interval_days);
 
 /**
  * sps30_set_fan_auto_cleaning_interval_days() - convenience function to set the
@@ -174,7 +189,18 @@ s16 sps30_get_fan_auto_cleaning_interval_days(u8 *interval_days);
  *                  disable auto cleaning
  * Return:          0 on success, an error code otherwise
  */
-s16 sps30_set_fan_auto_cleaning_interval_days(u8 interval_days);
+int16_t sps30_set_fan_auto_cleaning_interval_days(uint8_t interval_days);
+
+/**
+ * sps30_start_manual_fan_cleaning() - Immediately trigger the fan cleaning
+ *
+ * Note that this command can only be run when the sensor is in measurement
+ * mode, i.e. after sps30_start_measurement() without subsequent
+ * sps30_stop_measurement().
+ *
+ * Return:          0 on success, an error code otherwise
+ */
+int16_t sps30_start_manual_fan_cleaning();
 
 /**
  * sps30_reset() - reset the SGP30
@@ -182,13 +208,17 @@ s16 sps30_set_fan_auto_cleaning_interval_days(u8 interval_days);
  * The sensor reboots to the same state as before the reset but takes a few
  * seconds to resume measurements.
  *
+ * The caller should wait at least SPS30_RESET_DELAY_USEC microseconds before
+ * interacting with the sensor again in order for the sensor to restart.
+ * Interactions with the sensor without this delay might fail.
+ *
  * Note that the interface-select configuration is reinterpreted, thus Pin 4
  * must be pulled to ground during the reset period for the sensor to remain in
  * i2c mode.
  *
  * Return:          0 on success, an error code otherwise
  */
-s16 sps30_reset();
+int16_t sps30_reset();
 
 #ifdef __cplusplus
 }

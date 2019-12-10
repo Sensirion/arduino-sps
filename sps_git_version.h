@@ -32,6 +32,6 @@
 #ifndef SPS_GIT_VERSION_H
 #define SPS_GIT_VERSION_H
 
-extern const char * SPS_DRV_VERSION_STR;
+extern const char *SPS_DRV_VERSION_STR;
 
 #endif /* SPS_GIT_VERSION_H */
