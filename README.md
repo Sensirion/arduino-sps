@@ -24,7 +24,10 @@ This library has been tested on the following platforms:
 
 **Important Notes:** 
 
-* The SPS30 requires 5V supply voltage +/-0.5V in order to provide correct output values; the SPS30 should be compatible with 3.3V I2C levels, so as long as the supply voltage is correct the SPS30 should work fine with 3.3V setups
+* The SPS30 requires 5V supply voltage +/-0.5V in order to provide correct
+  output values; the SPS30 should be compatible with 3.3V I2C levels, so as 
+  long as the supply voltage is correct the SPS30 should work fine with 3.3V 
+  setups
 * Make sure that the SPS30's Pin 4 ("Interface select") is connected to GND, on
   power-up of the sensor, otherwise the sensor works in UART instead of I2C
   mode and this driver will not detect the sensor. Note that the
