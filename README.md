@@ -88,3 +88,15 @@ If you check the serial plotter window, you should see something like this:
 
 
 ![Serial monitor](doc/sps30-arduino-serial-plotter.jpg)
+
+
+## FAQ: How PMx is defined / Why values are the same
+
+A frequently asked question about values that are the same, which seems unlikely. However, this is due to the definition of PM_x_, that says that it's particles of diameter _x_ and smaller. As such, PM10 includes all particles of diameter 10 μm and smaller, and therefore includes particles from PM4 (which itself includes particles from PM2.5). To illustrate, here's a diagram that shows this 
+
+![How PMx is defined](https://user-images.githubusercontent.com/1300460/121040377-b445d880-c766-11eb-82d9-241dcdefab1f.png)
+
+In this example:
+- PM2.5 would be 3.1 μg/m^3
+- PM4 would be 3.2 μg/m^3 (3.1 particles [2.5 and smaller] + 0.1 [>2.5, <= 4.0])
+- PM10 would be 3.2 μg/m^3 (3.1 particles [2.5 and smaller] + 0.1 [>2.5, <= 4.0] + 0 [>4.0 <= 10])
