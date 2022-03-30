@@ -35,9 +35,13 @@
 /*
  * AVR Arduinos have a 32 byte I2C receive buffer in the Wire library
  * Use alternative I2C implementation to work around that
+ *
+ * TODO: change this to a more targetted selection, i.e. __AVR_ATmega328P__ etc vs __AVR__
  */
 #ifdef __AVR__
-#define SPS30_USE_ALT_I2C
+  #ifndef ARDUINO_ARCH_MEGAAVR
+     #define SPS30_USE_ALT_I2C
+  #endif
 #endif /* __AVR__ */
 
 /*
