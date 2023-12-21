@@ -58,7 +58,7 @@ select ```Tools```> ```Manage Libraries...```, then search for
 For manual installation, follow these steps:
 
 1. Download the latest ZIP file from the
-   [Github release page](https://github.com/winkj/arduino-sps/releases/latest)
+   [Github release page](https://github.com/Sensirion/arduino-sps/releases/latest)
 1. Start the Arduino IDE
 1. Select ```Sketch > Include Library > Add .ZIP Library...```
 1. A dialog will open; here, select the file you selected in step 1
