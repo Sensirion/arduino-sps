@@ -35,6 +35,8 @@
 // needed for delay() routine
 #include <Arduino.h>
 
+#include <Wire.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -75,7 +77,6 @@ int8_t sensirion_i2c_write(uint8_t address, const uint8_t *data, uint8_t count)
 
 #else /* SPS30_USE_ALT_I2C */
 
-#include <Wire.h>
 /**
  * Initialize all hard- and software components that are needed for the I2C
  * communication. After this function has been called, the functions
