@@ -37,12 +37,6 @@
 
 #include <Wire.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-
 #ifdef SPS30_USE_ALT_I2C
 #include "i2c_master_lib.h"
 
@@ -129,7 +123,3 @@ int8_t sensirion_i2c_write(uint8_t address, const uint8_t *data,
 void sensirion_sleep_usec(uint32_t useconds) {
     delay((useconds / 1000) + 1);
 }
-
-#ifdef __cplusplus
-}  // extern "C"
-#endif
