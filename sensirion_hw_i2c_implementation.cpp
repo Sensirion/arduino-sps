@@ -71,6 +71,8 @@ int8_t sensirion_i2c_write(uint8_t address, const uint8_t *data, uint8_t count)
 
 #else /* SPS30_USE_ALT_I2C */
 
+static TwoWire *sensirion_wire_object;
+
 /**
  * Initialize all hard- and software components that are needed for the I2C
  * communication. After this function has been called, the functions
@@ -78,7 +80,8 @@ int8_t sensirion_i2c_write(uint8_t address, const uint8_t *data, uint8_t count)
  */
 void sensirion_i2c_init()
 {
-   Wire.begin();
+   sensirion_wire_object = &Wire;
+   sensirion_wire_object->begin();
 }
 
 void sensirion_i2c_release(void)
@@ -89,11 +92,14 @@ int8_t sensirion_i2c_read(uint8_t address, uint8_t *data, uint8_t count) {
     uint8_t readData[count];
     uint8_t rxByteCount = 0;
 
-    // 2 bytes RH, 1 CRC, 2 bytes T, 1 CRC
-    Wire.requestFrom(address, count);
+    if (!sensirion_wire_object)
+        return -1;
 
-    while (Wire.available()) {  // wait till all arrive
-        readData[rxByteCount++] = Wire.read();
+    // 2 bytes RH, 1 CRC, 2 bytes T, 1 CRC
+    sensirion_wire_object->requestFrom(address, count);
+
+    while (sensirion_wire_object->available()) {  // wait till all arrive
+        readData[rxByteCount++] = sensirion_wire_object->read();
         if (rxByteCount >= count)
             break;
     }
@@ -105,9 +111,12 @@ int8_t sensirion_i2c_read(uint8_t address, uint8_t *data, uint8_t count) {
 
 int8_t sensirion_i2c_write(uint8_t address, const uint8_t *data,
                            uint8_t count) {
-    Wire.beginTransmission(address);
-    Wire.write(data, count);
-    Wire.endTransmission();
+    if (!sensirion_wire_object)
+        return -1;
+
+    sensirion_wire_object->beginTransmission(address);
+    sensirion_wire_object->write(data, count);
+    sensirion_wire_object->endTransmission();
 
     return 0;
 }
