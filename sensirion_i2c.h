@@ -33,6 +33,18 @@
 #define SENSIRION_I2C_H
 
 #include "sensirion_arch_config.h"
+#if defined(__cplusplus)
+#include <Wire.h>
+#endif
+
+// When included from C++, add a version of the init function that
+// accepts a Wire bus to use (in addition to the argumentless C-linkage
+// version defined below.
+// If SPS30_USE_ALT_I2C is defined, a fixed (local) I2C implementation
+// is used instead.
+#if !defined(SPS30_USE_ALT_I2C) && defined(__cplusplus)
+void sensirion_i2c_init(TwoWire& wire);
+#endif
 
 #ifdef __cplusplus
 extern "C" {

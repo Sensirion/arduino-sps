@@ -35,8 +35,6 @@
 // needed for delay() routine
 #include <Arduino.h>
 
-#include <Wire.h>
-
 #ifdef SPS30_USE_ALT_I2C
 #include "i2c_master_lib.h"
 
@@ -78,10 +76,15 @@ static TwoWire *sensirion_wire_object;
  * communication. After this function has been called, the functions
  * i2c_read() and i2c_write() must succeed.
  */
+void sensirion_i2c_init(TwoWire& wire)
+{
+   sensirion_wire_object = &wire;
+   sensirion_wire_object->begin();
+}
+
 void sensirion_i2c_init()
 {
-   sensirion_wire_object = &Wire;
-   sensirion_wire_object->begin();
+    sensirion_i2c_init(Wire);
 }
 
 void sensirion_i2c_release(void)
