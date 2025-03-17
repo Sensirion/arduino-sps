@@ -69,14 +69,14 @@ int8_t sensirion_i2c_write(uint8_t address, const uint8_t *data, uint8_t count)
 
 #else /* SPS30_USE_ALT_I2C */
 
-static TwoWire *sensirion_wire_object;
+static SensirionWire_t *sensirion_wire_object;
 
 /**
  * Initialize all hard- and software components that are needed for the I2C
  * communication. After this function has been called, the functions
  * i2c_read() and i2c_write() must succeed.
  */
-void sensirion_i2c_init(TwoWire& wire)
+void sensirion_i2c_init(SensirionWire_t& wire)
 {
    sensirion_wire_object = &wire;
    sensirion_wire_object->begin();

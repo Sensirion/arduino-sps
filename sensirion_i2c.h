@@ -43,7 +43,15 @@
 // If SPS30_USE_ALT_I2C is defined, a fixed (local) I2C implementation
 // is used instead.
 #if !defined(SPS30_USE_ALT_I2C) && defined(__cplusplus)
-void sensirion_i2c_init(TwoWire& wire);
+#  if __cpp_decltype >= 200707L
+// Not all cores use the same typename (e.g. SAMD uses arduino::TwoWire), so
+// deduce the type (and assume all Wire buses use the same type).
+typedef decltype(Wire) SensirionWire_t;
+#  else
+// If we do not have decltype, make an assumption about the type name
+typedef TwoWire SensirionWire_t;
+#  endif
+void sensirion_i2c_init(SensirionWire_t& wire);
 #endif
 
 #ifdef __cplusplus
