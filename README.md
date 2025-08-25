@@ -1,3 +1,7 @@
+**Note: This repository is deprecated. Please use our new drivers:**
+* Uart: https://github.com/Sensirion/arduino-uart-sps30
+* I2C: https://github.com/Sensirion/arduino-i2c-sps30
+
 # Arduino library for the SPS30 particulate matter sensor
 
 To learn more about the SPS30, please visit https://www.sensirion.com/sps30/.
